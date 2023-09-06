@@ -1,6 +1,7 @@
 import React from "react";
 import { render, fireEvent } from "@testing-library/react";
 import Carousel from "./Carousel";
+import { toHaveStyle } from "@testing-library/jest-dom";
 
 it("renders without crashing", function() {
   render(<Carousel />);
@@ -49,3 +50,26 @@ it("works when you click on the left arrow", function() {
   expect(queryByAltText("Photo by Josh Post on Unsplash")).not.toBeInTheDocument();
 });
 
+it("left arrow starts disappeared and comes back when you are at the second pic", function() {
+  const { getByTestId, queryByAltText } = render(<Carousel />);
+  const leftArrow = getByTestId('left-arrow')
+  const rightArrow = getByTestId('right-arrow')
+
+  // expect the first image to show, but not the second
+  expect(queryByAltText("Photo by Richard Pasquarella on Unsplash")).toBeInTheDocument();
+  expect(queryByAltText("Photo by Pratik Patel on Unsplash")).not.toBeInTheDocument();
+
+  // expect the right arrow to show but not the left 
+  // expect(queryByTestId("left-arrow").toHaveStyle({display: "none"}))
+  // expect(queryByTestId("right-arrow").not.toHaveStyle({display: "none"}))
+  expect(leftArrow).toHaveStyle(`display: none`);
+  expect(rightArrow).not.toHaveStyle(`display: none`);
+
+  // move forward in the carousel
+ 
+  fireEvent.click(rightArrow);
+
+  // expect both arrows to show
+  expect(rightArrow).not.toHaveStyle(`display: none`);
+  expect(leftArrow).not.toHaveStyle(`display: none`);
+});
